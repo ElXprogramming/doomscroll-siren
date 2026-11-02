@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-dark: #07090e;
+    --panel-dark: #0d111a;
+    --border-dark: #1b2433;
+    --accent-cyan: #00f2fe;
+    --accent-red: #ff1a40;
+    --accent-amber: #ffaa00;
+    --accent-emerald: #00ff88;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: #e2e8f0;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline and tactical grid background */
+  .tactical-grid {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+  }
+
+  .scanline {
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0),
+      rgba(255,255,255,0) 50%,
+      rgba(0, 0, 0, 0.3) 50%,
+      rgba(0, 0, 0, 0.3)
+    );
+    background-size: 100% 4px;
+  }
+
+  /* Custom glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 30px rgba(255, 26, 64, 0.5);
+  }
+
+  .glow-red-intense {
+    box-shadow: 0 0 50px rgba(255, 26, 64, 0.8), inset 0 0 40px rgba(255, 26, 64, 0.4);
+  }
+
+  .glow-amber {
+    box-shadow: 0 0 25px rgba(255, 170, 0, 0.35);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.7);
+  }
+
+  .text-glow-red {
+    text-shadow: 0 0 15px rgba(255, 26, 64, 0.9);
+  }
+
+  /* Siren flashing overlay animation */
+  @keyframes siren-flash {
+    0%, 100% {
+      background-color: rgba(255, 0, 43, 0.35);
+      border-color: rgba(255, 0, 43, 0.9);
+    }
+    50% {
+      background-color: rgba(255, 0, 43, 0.08);
+      border-color: rgba(255, 0, 43, 0.3);
+    }
+  }
+
+  .animate-siren-flash {
+    animation: siren-flash 0.35s infinite ease-in-out;
+  }
+
+  @keyframes pulse-fast {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+  }
+
+  .animate-pulse-fast {
+    animation: pulse-fast 0.6s infinite ease-in-out;
+  }
+}
