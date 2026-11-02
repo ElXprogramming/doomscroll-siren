@@ -1,0 +1,466 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Resvg } from '@resvg/resvg-js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
+
+const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background Gradients -->
+    <radialGradient id="cyan-glow" cx="25%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.14" />
+      <stop offset="60%" stop-color="#00f2fe" stop-opacity="0.02" />
+      <stop offset="100%" stop-color="#07090e" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="red-glow" cx="80%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#ff1a40" stop-opacity="0.18" />
+      <stop offset="50%" stop-color="#ff1a40" stop-opacity="0.04" />
+      <stop offset="100%" stop-color="#07090e" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="center-radar" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.08" />
+      <stop offset="70%" stop-color="#00f2fe" stop-opacity="0.01" />
+      <stop offset="100%" stop-color="#00f2fe" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Tactical Grid Pattern -->
+    <pattern id="tactical-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00f2fe" stroke-width="1" stroke-opacity="0.05" />
+    </pattern>
+
+    <!-- Scanline Pattern -->
+    <pattern id="scanlines" width="100" height="4" patternUnits="userSpaceOnUse">
+      <rect width="100" height="2" fill="#000000" fill-opacity="0.25" />
+      <rect y="2" width="100" height="2" fill="transparent" />
+    </pattern>
+
+    <!-- Linear Gradients for UI Panels -->
+    <linearGradient id="panel-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e131f" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#080b12" stop-opacity="0.95" />
+    </linearGradient>
+
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0d1524" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0a0e18" stop-opacity="0.6" />
+    </linearGradient>
+
+    <linearGradient id="siren-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff1a40" />
+      <stop offset="50%" stop-color="#ff4757" />
+      <stop offset="100%" stop-color="#ff6b81" />
+    </linearGradient>
+
+    <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="100%" stop-color="#4facfe" />
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Hazard Pattern for Top Corner -->
+    <pattern id="hazard-pattern" width="16" height="16" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <rect width="8" height="16" fill="#ff1a40" fill-opacity="0.4" />
+      <rect x="8" width="8" height="16" fill="#07090e" fill-opacity="0.8" />
+    </pattern>
+  </defs>
+
+  <!-- Base Background -->
+  <rect width="1200" height="630" fill="#07090e" />
+
+  <!-- Ambient Glows -->
+  <rect width="1200" height="630" fill="url(#cyan-glow)" />
+  <rect width="1200" height="630" fill="url(#red-glow)" />
+
+  <!-- Tactical Grid -->
+  <rect width="1200" height="630" fill="url(#tactical-grid)" />
+
+  <!-- Grid Intersect Crosshairs -->
+  <g stroke="#00f2fe" stroke-opacity="0.25" stroke-width="1.2">
+    <path d="M 120 115 L 120 125 M 115 120 L 125 120" />
+    <path d="M 360 115 L 360 125 M 355 120 L 365 120" />
+    <path d="M 600 115 L 600 125 M 595 120 L 605 120" />
+    <path d="M 120 320 L 120 330 M 115 325 L 125 325" />
+    <path d="M 360 320 L 360 330 M 355 325 L 365 325" />
+    <path d="M 120 520 L 120 530 M 115 525 L 125 525" />
+    <path d="M 360 520 L 360 530 M 355 525 L 365 525" />
+    <path d="M 600 520 L 600 530 M 595 525 L 605 525" />
+  </g>
+
+  <!-- Outer Framing Border with Inset Corner Brackets -->
+  <rect x="24" y="24" width="1152" height="582" rx="4" fill="none" stroke="#162032" stroke-width="1.5" />
+  
+  <!-- Outer Corner Brackets (Cyan) -->
+  <g stroke="#00f2fe" stroke-width="2.5" stroke-linecap="square" fill="none">
+    <!-- Top-Left -->
+    <path d="M 24 56 L 24 24 L 56 24" />
+    <!-- Top-Right -->
+    <path d="M 1144 24 L 1176 24 L 1176 56" />
+    <!-- Bottom-Left -->
+    <path d="M 24 574 L 24 606 L 56 606" />
+    <!-- Bottom-Right -->
+    <path d="M 1144 606 L 1176 606 L 1176 574" />
+  </g>
+
+  <!-- Technical Edge Coordinates & Metadata -->
+  <text x="64" y="42" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-size="10" font-weight="700" fill="#00f2fe" fill-opacity="0.7" letter-spacing="1.5">SYS.ID // SIREN-SENTINEL-YOLO11</text>
+  <text x="600" y="42" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">CLIENT-SIDE NEURAL RECOGNITION MATRIX</text>
+  <text x="1136" y="42" text-anchor="end" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-size="10" font-weight="700" fill="#ff1a40" fill-opacity="0.8" letter-spacing="1.5">STATUS // LIVE DEFENSE</text>
+
+  <!-- =============================================================== -->
+  <!-- LEFT COLUMN: BRANDING, HEADLINE, VALUE PROPOSITION, FEATURE PILLS -->
+  <!-- =============================================================== -->
+
+  <!-- Top Sentinel Status Pill -->
+  <g transform="translate(64, 68)">
+    <rect width="320" height="30" rx="15" fill="#0c1322" stroke="#00f2fe" stroke-opacity="0.5" stroke-width="1" />
+    <!-- Green Pulsing Dot -->
+    <circle cx="20" cy="15" r="4.5" fill="#00ff88" />
+    <circle cx="20" cy="15" r="8" fill="none" stroke="#00ff88" stroke-opacity="0.4" stroke-width="1" />
+    <text x="36" y="19" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-size="11" font-weight="800" fill="#00f2fe" letter-spacing="1">TACTICAL AI FOCUS SENTINEL</text>
+  </g>
+
+  <!-- Main Brand Title -->
+  <g transform="translate(64, 130)">
+    <!-- Brand Icon: Sentinel Shield Reticle -->
+    <g transform="translate(0, 4)">
+      <rect width="64" height="64" rx="14" fill="#0c121e" stroke="#00f2fe" stroke-width="2" />
+      <!-- Inner Crosshairs -->
+      <circle cx="32" cy="32" r="18" fill="none" stroke="#00f2fe" stroke-width="1.8" stroke-opacity="0.7" />
+      <path d="M 32 8 L 32 18 M 32 46 L 32 56 M 8 32 L 18 32 M 46 32 L 56 32" stroke="#00f2fe" stroke-width="2" />
+      <!-- Glowing Red Siren Core -->
+      <circle cx="32" cy="32" r="8" fill="#ff1a40" filter="url(#glow-red)" />
+      <circle cx="32" cy="32" r="5" fill="#ffffff" />
+    </g>
+
+    <!-- Version Tag -->
+    <rect x="80" y="4" width="94" height="20" rx="4" fill="#091829" stroke="#00f2fe" stroke-opacity="0.5" stroke-width="1" />
+    <text x="127" y="17" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-size="10" font-weight="800" fill="#00f2fe" letter-spacing="1">v1.0-YOLO11</text>
+
+    <!-- Big Title -->
+    <text x="80" y="62" font-family="'JetBrainsMono Nerd Font', system-ui, sans-serif" font-weight="900" font-size="46" fill="#ffffff" letter-spacing="-0.5">
+      DOOMSCROLL <tspan fill="url(#siren-grad)" filter="url(#glow-red)">SIREN</tspan>
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="104" font-family="'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', monospace" font-weight="700" font-size="14" fill="#00f2fe" letter-spacing="2.5">
+      REAL-TIME PHONE INTERCEPTOR &amp; WORKSPACE SENTRY
+    </text>
+  </g>
+
+  <!-- Explanatory Pitch (fitted neatly within column) -->
+  <g transform="translate(64, 264)">
+    <text x="0" y="0" font-family="'DejaVu Sans', system-ui, sans-serif" font-size="16" fill="#cbd5e1" font-weight="400">
+      Autonomous client-side computer vision sentry that
+    </text>
+    <text x="0" y="24" font-family="'DejaVu Sans', system-ui, sans-serif" font-size="16" fill="#cbd5e1" font-weight="400">
+      detects smartphone doomscrolling via your webcam
+    </text>
+    <text x="0" y="48" font-family="'DejaVu Sans', system-ui, sans-serif" font-size="16" fill="#94a3b8" font-weight="400">
+      and triggers an instant tactical synthesizer siren.
+    </text>
+  </g>
+
+  <!-- 4 Feature Cards (2x2 Grid) -->
+  <g transform="translate(64, 326)">
+    <!-- Card 1: Neural Engine -->
+    <g transform="translate(0, 0)">
+      <rect width="246" height="66" rx="8" fill="url(#card-grad)" stroke="#1a273b" stroke-width="1.2" />
+      <rect x="0" y="0" width="3" height="66" rx="1.5" fill="#00f2fe" />
+      <!-- Icon -->
+      <circle cx="28" cy="33" r="14" fill="#00f2fe" fill-opacity="0.12" />
+      <text x="28" y="38" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="14" font-weight="900" fill="#00f2fe">⚡</text>
+      <text x="52" y="28" font-family="'JetBrainsMono Nerd Font', monospace" font-size="13" font-weight="800" fill="#f8fafc">YOLO11 NANO</text>
+      <text x="52" y="47" font-family="'DejaVu Sans', sans-serif" font-size="11" fill="#94a3b8">WebGPU + WASM Neural Net</text>
+    </g>
+
+    <!-- Card 2: Privacy -->
+    <g transform="translate(262, 0)">
+      <rect width="246" height="66" rx="8" fill="url(#card-grad)" stroke="#1a273b" stroke-width="1.2" />
+      <rect x="0" y="0" width="3" height="66" rx="1.5" fill="#00ff88" />
+      <!-- Icon -->
+      <circle cx="28" cy="33" r="14" fill="#00ff88" fill-opacity="0.12" />
+      <text x="28" y="38" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="14" font-weight="900" fill="#00ff88">🔒</text>
+      <text x="52" y="28" font-family="'JetBrainsMono Nerd Font', monospace" font-size="13" font-weight="800" fill="#f8fafc">100% PRIVATE</text>
+      <text x="52" y="47" font-family="'DejaVu Sans', sans-serif" font-size="11" fill="#94a3b8">Zero Cloud • All In-Browser</text>
+    </g>
+
+    <!-- Card 3: Dual-Oscillator Siren -->
+    <g transform="translate(0, 80)">
+      <rect width="246" height="66" rx="8" fill="url(#card-grad)" stroke="#1a273b" stroke-width="1.2" />
+      <rect x="0" y="0" width="3" height="66" rx="1.5" fill="#ff1a40" />
+      <!-- Icon -->
+      <circle cx="28" cy="33" r="14" fill="#ff1a40" fill-opacity="0.12" />
+      <text x="28" y="38" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="14" font-weight="900" fill="#ff1a40">🔊</text>
+      <text x="52" y="28" font-family="'JetBrainsMono Nerd Font', monospace" font-size="13" font-weight="800" fill="#f8fafc">TACTICAL SIREN</text>
+      <text x="52" y="47" font-family="'DejaVu Sans', sans-serif" font-size="11" fill="#94a3b8">Dual Web Audio Synthesizer</text>
+    </g>
+
+    <!-- Card 4: Anti-Flicker Grace -->
+    <g transform="translate(262, 80)">
+      <rect width="246" height="66" rx="8" fill="url(#card-grad)" stroke="#1a273b" stroke-width="1.2" />
+      <rect x="0" y="0" width="3" height="66" rx="1.5" fill="#ffaa00" />
+      <!-- Icon -->
+      <circle cx="28" cy="33" r="14" fill="#ffaa00" fill-opacity="0.12" />
+      <text x="28" y="38" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="14" font-weight="900" fill="#ffaa00">⏱️</text>
+      <text x="52" y="28" font-family="'JetBrainsMono Nerd Font', monospace" font-size="13" font-weight="800" fill="#f8fafc">ANTI-FLICKER</text>
+      <text x="52" y="47" font-family="'DejaVu Sans', sans-serif" font-size="11" fill="#94a3b8">1.5x Decay Grace Architecture</text>
+    </g>
+  </g>
+
+  <!-- Bottom Left Deployment URL & Badges -->
+  <g transform="translate(64, 520)">
+    <!-- Pill for live link -->
+    <rect width="254" height="36" rx="8" fill="#0a121e" stroke="#00f2fe" stroke-opacity="0.4" stroke-width="1.2" />
+    <circle cx="20" cy="18" r="4.5" fill="#00f2fe" />
+    <circle cx="20" cy="18" r="8" fill="none" stroke="#00f2fe" stroke-opacity="0.3" stroke-width="1" />
+    <text x="36" y="23" font-family="'JetBrainsMono Nerd Font', monospace" font-size="12" font-weight="800" fill="#00f2fe" letter-spacing="0.5">doomscroll-siren.netlify.app</text>
+
+    <!-- Secondary badge: Client-Side Engine -->
+    <rect x="266" width="242" height="36" rx="8" fill="#0a121e" stroke="#334155" stroke-opacity="0.8" stroke-width="1" />
+    <text x="387" y="23" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="700" fill="#94a3b8">
+      ONNX • WebGPU • React 19
+    </text>
+  </g>
+
+  <!-- =============================================================== -->
+  <!-- RIGHT COLUMN: THE TACTICAL HUD WEBCAM VIEWPORT & DETECTION MOCKUP -->
+  <!-- =============================================================== -->
+  <g transform="translate(600, 68)">
+    <!-- Viewport Container Panel -->
+    <rect width="536" height="492" rx="12" fill="url(#panel-bg)" stroke="#1b283d" stroke-width="1.5" />
+
+    <!-- Corner Brackets for Viewport -->
+    <g stroke="#00f2fe" stroke-width="2.5" stroke-linecap="square" fill="none">
+      <path d="M 0 24 L 0 0 L 24 0" />
+      <path d="M 512 0 L 536 0 L 536 24" />
+      <path d="M 0 468 L 0 492 L 24 492" />
+      <path d="M 512 492 L 536 492 L 536 468" />
+    </g>
+
+    <!-- Top Viewport HUD Status Bar -->
+    <rect x="1" y="1" width="534" height="38" rx="11" fill="#090e17" />
+    <line x1="1" y1="39" x2="535" y2="39" stroke="#162234" stroke-width="1" />
+
+    <!-- Live Breach Status -->
+    <g transform="translate(16, 12)">
+      <circle cx="6" cy="7" r="4.5" fill="#ff1a40" filter="url(#glow-red)" />
+      <text x="18" y="11" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="800" fill="#ff4757" letter-spacing="1">
+        LIVE INTERCEPT // BREACH CONFIRMED
+      </text>
+    </g>
+
+    <!-- Telemetry Readouts -->
+    <text x="520" y="23" text-anchor="end" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="700" fill="#00f2fe" letter-spacing="1">
+      30.2 FPS • 14.8ms
+    </text>
+
+    <!-- Simulated Surveillance Feed Area -->
+    <g transform="translate(18, 52)">
+      <!-- Surveillance feed background -->
+      <rect width="500" height="295" rx="8" fill="#05070c" stroke="#141c2c" stroke-width="1" />
+      
+      <!-- Subtle internal radar rings in surveillance feed -->
+      <circle cx="250" cy="147" r="110" fill="none" stroke="#00f2fe" stroke-opacity="0.07" stroke-width="1" />
+      <circle cx="250" cy="147" r="60" fill="none" stroke="#00f2fe" stroke-opacity="0.08" stroke-width="1" />
+      <line x1="250" y1="37" x2="250" y2="257" stroke="#00f2fe" stroke-opacity="0.05" stroke-width="1" />
+      <line x1="140" y1="147" x2="360" y2="147" stroke="#00f2fe" stroke-opacity="0.05" stroke-width="1" />
+
+      <!-- Scanline overlay on the feed -->
+      <rect width="500" height="295" rx="8" fill="url(#scanlines)" opacity="0.3" pointer-events="none" />
+
+      <!-- 1. Operator Silhouette & Bounding Box (Cyan) -->
+      <g transform="translate(30, 20)">
+        <!-- Person Bounding Box -->
+        <rect width="210" height="255" rx="4" fill="#00f2fe" fill-opacity="0.03" stroke="#00f2fe" stroke-opacity="0.4" stroke-width="1.2" stroke-dasharray="6 3" />
+        
+        <!-- Corner brackets -->
+        <path d="M 0 14 L 0 0 L 14 0" stroke="#00f2fe" stroke-width="2" fill="none" />
+        <path d="M 196 0 L 210 0 L 210 14" stroke="#00f2fe" stroke-width="2" fill="none" />
+        <path d="M 0 241 L 0 255 L 14 255" stroke="#00f2fe" stroke-width="2" fill="none" />
+        <path d="M 196 255 L 210 255 L 210 241" stroke="#00f2fe" stroke-width="2" fill="none" />
+
+        <!-- Operator Label Tag -->
+        <rect x="0" y="-18" width="128" height="18" fill="#070a10" stroke="#00f2fe" stroke-width="1" />
+        <text x="6" y="-5" font-family="'JetBrainsMono Nerd Font', monospace" font-size="10" font-weight="700" fill="#00f2fe">
+          OPERATOR 98.4%
+        </text>
+
+        <!-- Stylized Operator Wireframe / Silhouette -->
+        <!-- Head -->
+        <circle cx="105" cy="55" r="26" fill="#0e1726" stroke="#00f2fe" stroke-opacity="0.4" stroke-width="1.5" />
+        <!-- Eyes / visor line -->
+        <line x1="93" y1="52" x2="117" y2="52" stroke="#00f2fe" stroke-opacity="0.7" stroke-width="2" />
+        <!-- Torso -->
+        <path d="M 50 140 C 65 100, 145 100, 160 140 L 175 235 L 35 235 Z" fill="#0a121d" stroke="#00f2fe" stroke-opacity="0.3" stroke-width="1.5" />
+      </g>
+
+      <!-- 2. Cell Phone Detected Target (Crimson Red Bounding Box & Lock) -->
+      <g transform="translate(265, 45)">
+        <!-- Pulsing Red Bounding Box -->
+        <rect width="195" height="225" rx="6" fill="#ff1a40" fill-opacity="0.08" stroke="#ff1a40" stroke-width="2" filter="url(#glow-red)" />
+        
+        <!-- Corner Brackets (Red) -->
+        <g stroke="#ff1a40" stroke-width="3.5" stroke-linecap="square" fill="none">
+          <path d="M 0 22 L 0 0 L 22 0" />
+          <path d="M 173 0 L 195 0 L 195 22" />
+          <path d="M 0 203 L 0 225 L 22 225" />
+          <path d="M 173 225 L 195 225 L 195 203" />
+        </g>
+
+        <!-- Threat Label Tag -->
+        <rect x="0" y="-22" width="186" height="22" fill="#ff1a40" rx="2" />
+        <text x="8" y="-6" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="900" fill="#ffffff">
+          ⚠️ CELL PHONE 99.2% [THREAT]
+        </text>
+
+        <!-- Smartphone Model Graphic Inside Box -->
+        <g transform="translate(42, 18)">
+          <!-- Phone Body Frame -->
+          <rect width="110" height="190" rx="14" fill="#0f1420" stroke="#334155" stroke-width="2.5" />
+          <!-- Phone Speaker Notch -->
+          <rect x="38" y="6" width="34" height="4" rx="2" fill="#475569" />
+          <!-- Phone Screen -->
+          <rect x="6" y="16" width="98" height="158" rx="8" fill="#140a12" />
+          
+          <!-- Doomscroll Feed Representation (Social Media Skeleton) -->
+          <rect x="14" y="24" width="22" height="22" rx="11" fill="#3b1525" />
+          <rect x="42" y="26" width="48" height="7" rx="3" fill="#4a1a2e" />
+          <rect x="42" y="37" width="30" height="5" rx="2" fill="#331422" />
+          
+          <!-- Media Card In Feed -->
+          <rect x="14" y="54" width="82" height="52" rx="4" fill="#2d0b1a" />
+          
+          <!-- Siren Alert Overlay on Screen -->
+          <rect x="10" y="112" width="90" height="54" rx="4" fill="#ff1a40" fill-opacity="0.25" stroke="#ff1a40" stroke-width="1.2" />
+          <text x="55" y="132" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="9" font-weight="900" fill="#ffffff">DOOMSCROLL</text>
+          <text x="55" y="145" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="9" font-weight="900" fill="#ff4757">BLOCKED</text>
+          <text x="55" y="157" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="8" font-weight="700" fill="#ffb8c2">PUT DOWN NOW</text>
+        </g>
+
+        <!-- Centered Target Reticle -->
+        <g transform="translate(97, 112)">
+          <circle cx="0" cy="0" r="28" fill="none" stroke="#ff1a40" stroke-width="1.5" stroke-dasharray="8 4" />
+          <circle cx="0" cy="0" r="14" fill="none" stroke="#ff1a40" stroke-width="1.5" />
+          <line x1="-36" y1="0" x2="-8" y2="0" stroke="#ff1a40" stroke-width="2" />
+          <line x1="8" y1="0" x2="36" y2="0" stroke="#ff1a40" stroke-width="2" />
+          <line x1="0" y1="-36" x2="0" y2="-8" stroke="#ff1a40" stroke-width="2" />
+          <line x1="0" y1="8" x2="0" y2="36" stroke="#ff1a40" stroke-width="2" />
+          <circle cx="0" cy="0" r="3" fill="#ff1a40" />
+        </g>
+      </g>
+    </g>
+
+    <!-- Bottom HUD Section: Exposure Gauge & Synthesizer Waveform -->
+    <g transform="translate(18, 360)">
+      <!-- Doomscroll Exposure Meter Container -->
+      <rect width="500" height="114" rx="8" fill="#080b12" stroke="#ff1a40" stroke-opacity="0.7" stroke-width="1.5" filter="url(#glow-red)" />
+      
+      <!-- Header of Meter -->
+      <g transform="translate(14, 14)">
+        <text x="0" y="9" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="800" fill="#ff4757" letter-spacing="1">
+          🚨 DOOMSCROLL EXPOSURE // CRITICAL LIMIT
+        </text>
+        <text x="472" y="9" text-anchor="end" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="900" fill="#ff1a40">
+          10.0s / 10.0s
+        </text>
+      </g>
+
+      <!-- 24 Segment LED Meter Bar -->
+      <g transform="translate(14, 34)">
+        <!-- Background track -->
+        <rect width="472" height="14" rx="3" fill="#151b27" />
+        
+        <!-- 24 LED Segments: Safe(Green/Cyan) -> Warning(Amber) -> Critical(Red) -->
+        <!-- First 10 Segments (Cyan/Emerald) -->
+        <rect x="2" y="2" width="16" height="10" rx="1" fill="#00ff88" />
+        <rect x="22" y="2" width="16" height="10" rx="1" fill="#00ff88" />
+        <rect x="42" y="2" width="16" height="10" rx="1" fill="#00ff88" />
+        <rect x="62" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="82" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="102" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="122" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="142" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="162" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+        <rect x="182" y="2" width="16" height="10" rx="1" fill="#00f2fe" />
+
+        <!-- Next 6 Segments (Warning Amber) -->
+        <rect x="202" y="2" width="16" height="10" rx="1" fill="#ffaa00" />
+        <rect x="222" y="2" width="16" height="10" rx="1" fill="#ffaa00" />
+        <rect x="242" y="2" width="16" height="10" rx="1" fill="#ffaa00" />
+        <rect x="262" y="2" width="16" height="10" rx="1" fill="#ffaa00" />
+        <rect x="282" y="2" width="16" height="10" rx="1" fill="#ff7700" />
+        <rect x="302" y="2" width="16" height="10" rx="1" fill="#ff7700" />
+
+        <!-- Final 8 Segments (Intense Crimson Alert) -->
+        <rect x="322" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="342" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="362" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="382" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="402" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="422" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="442" y="2" width="16" height="10" rx="1" fill="#ff1a40" />
+        <rect x="462" y="2" width="16" height="10" rx="1" fill="#ffffff" filter="url(#glow-red)" />
+      </g>
+
+      <!-- Bottom Audio Synthesizer Waveform & Alert Status -->
+      <g transform="translate(14, 58)">
+        <!-- Synthesizer Audio Waveform Graph -->
+        <g stroke="#ff1a40" stroke-width="1.8" stroke-linecap="round" fill="none">
+          <path d="M 0 28 Q 12 10, 24 28 T 48 28 T 72 28 T 96 28 T 120 28 T 144 28 T 168 28 T 192 28" opacity="0.3" />
+          <path d="M 0 28 L 8 16 L 16 38 L 24 10 L 32 44 L 40 4 L 48 48 L 56 2 L 64 50 L 72 6 L 80 46 L 88 12 L 96 42 L 104 16 L 112 36 L 120 20 L 128 32 L 136 24 L 144 30 L 152 26 L 160 28" stroke="#ff4757" />
+        </g>
+        <text x="170" y="32" font-family="'JetBrainsMono Nerd Font', monospace" font-size="9" font-weight="700" fill="#94a3b8">
+          600Hz ↔ 1300Hz DUAL-OSC LFO
+        </text>
+
+        <!-- Siren Status Pill Button -->
+        <g transform="translate(320, 10)">
+          <rect width="152" height="34" rx="6" fill="#ff1a40" filter="url(#glow-red)" />
+          <text x="76" y="21" text-anchor="middle" font-family="'JetBrainsMono Nerd Font', monospace" font-size="11" font-weight="900" fill="#ffffff" letter-spacing="0.5">
+            🚨 SIREN ENGAGED
+          </text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>`;
+
+// Save SVG
+const publicDir = path.join(rootDir, 'public');
+const svgPath = path.join(publicDir, 'og-image.svg');
+const pngPath = path.join(publicDir, 'og-image.png');
+
+fs.writeFileSync(svgPath, svgContent, 'utf-8');
+console.log(`Saved SVG to ${svgPath}`);
+
+// Render PNG using Resvg
+const resvg = new Resvg(svgContent, {
+  fitTo: {
+    mode: 'width',
+    value: 1200,
+  },
+  font: {
+    loadSystemFonts: true,
+    defaultFontFamily: 'JetBrainsMono Nerd Font',
+  },
+});
+
+const pngData = resvg.render();
+const pngBuffer = pngData.asPng();
+fs.writeFileSync(pngPath, pngBuffer);
+console.log(`Successfully generated 1200x630 OpenGraph PNG (${(pngBuffer.length / 1024).toFixed(1)} KB) at ${pngPath}`);
