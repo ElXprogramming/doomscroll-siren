@@ -3,7 +3,11 @@
 > **Tactical Client-Side AI Focus Sentinel & Real-Time Phone Interceptor**
 > Running YOLO11 Nano via ONNX WebAssembly with Embedded NMS and Dual-Oscillator Web Audio Synthesizer.
 
-![Doomscroll Siren Preview](public/favicon.svg)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1a587c24-7709-40e9-bb18-849d091f90e5/deploy-status)](https://app.netlify.com/projects/doomscroll-siren/deploys)
+[![Live App](https://img.shields.io/badge/LIVE%20DEMO-doomscroll--siren.netlify.app-00f2fe?style=for-the-badge&logo=netlify)](https://doomscroll-siren.netlify.app)
+
+🌐 **Live Deployment**: [https://doomscroll-siren.netlify.app](https://doomscroll-siren.netlify.app)  
+📦 **GitHub Repository**: [https://github.com/ElXprogramming/doomscroll-siren](https://github.com/ElXprogramming/doomscroll-siren)
 
 ---
 
