@@ -3,7 +3,8 @@ import type { Detection } from '../types';
 export function renderHUDOverlay(
   canvas: HTMLCanvasElement,
   detections: Detection[],
-  isSirenActive: boolean
+  isSirenActive: boolean,
+  isMirrored: boolean = true
 ): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -44,9 +45,11 @@ export function renderHUDOverlay(
 
   // Render detections
   for (const det of detections) {
-    const boxX = det.x1 * w;
+    const normX1 = isMirrored ? 1 - det.x2 : det.x1;
+    const normX2 = isMirrored ? 1 - det.x1 : det.x2;
+    const boxX = normX1 * w;
     const boxY = det.y1 * h;
-    const boxW = (det.x2 - det.x1) * w;
+    const boxW = (normX2 - normX1) * w;
     const boxH = (det.y2 - det.y1) * h;
 
     if (det.classId === 67) {

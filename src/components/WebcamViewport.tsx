@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Camera, ShieldAlert, Cpu, AlertTriangle, Eye, EyeOff, Radio } from 'lucide-react';
+import { Camera, ShieldAlert, Cpu, AlertTriangle, Eye, EyeOff, Radio, FlipHorizontal } from 'lucide-react';
 import type { Detection, GuardState } from '../types';
 
 interface WebcamViewportProps {
@@ -16,6 +16,8 @@ interface WebcamViewportProps {
   onToggleSimulatedPhone: () => void;
   modelLoadingMessage: string | null;
   cameraError: string | null;
+  isMirrored: boolean;
+  onToggleMirror: () => void;
 }
 
 export const WebcamViewport: React.FC<WebcamViewportProps> = ({
@@ -32,6 +34,8 @@ export const WebcamViewport: React.FC<WebcamViewportProps> = ({
   onToggleSimulatedPhone,
   modelLoadingMessage,
   cameraError,
+  isMirrored,
+  onToggleMirror,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,8 +66,20 @@ export const WebcamViewport: React.FC<WebcamViewportProps> = ({
           <Radio className={`w-3.5 h-3.5 ${isArmed ? 'text-cyan-400 animate-pulse' : 'text-slate-600'}`} />
           <span className="text-slate-300 font-bold uppercase tracking-wider">OPTICAL SENSOR FEED // CAM-01</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-slate-500">RES: 640x480</span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={onToggleMirror}
+            className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold flex items-center gap-1 transition-colors ${
+              isMirrored
+                ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-600/60'
+                : 'bg-slate-900 text-slate-400 border border-slate-700'
+            }`}
+            title="Toggle Mirror Camera Feed"
+          >
+            <FlipHorizontal className="w-3 h-3" />
+            <span className="hidden xs:inline">MIRROR:</span> {isMirrored ? 'ON' : 'OFF'}
+          </button>
+          <span className="hidden sm:inline text-slate-500">RES: 640x480</span>
           <span
             className={`px-2 py-0.5 rounded text-[11px] font-bold ${
               isArmed
@@ -97,7 +113,9 @@ export const WebcamViewport: React.FC<WebcamViewportProps> = ({
           playsInline
           muted
           autoPlay
-          className={`w-full h-full object-cover transition-opacity duration-300 ${isArmed ? 'opacity-100' : 'opacity-20'}`}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${
+            isMirrored ? '-scale-x-100' : ''
+          } ${isArmed ? 'opacity-100' : 'opacity-20'}`}
         />
 
         {/* Overlay Canvas for HUD Bounding Boxes */}

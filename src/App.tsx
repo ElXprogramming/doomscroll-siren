@@ -34,6 +34,9 @@ export function App() {
   });
   const [isMuted, setIsMuted] = useState(false);
   const [isTestingSiren, setIsTestingSiren] = useState(false);
+  const [isMirrored, setIsMirrored] = useState(true);
+  const isMirroredRef = useRef(true);
+  isMirroredRef.current = isMirrored;
 
   // Telemetry & Stats
   const [telemetry, setTelemetry] = useState<TelemetryStats>(loadTelemetry);
@@ -205,7 +208,8 @@ export function App() {
             renderHUDOverlay(
               overlayCanvasRef.current,
               activeDets,
-              phoneHoldDurationRef.current >= currentSettings.timeLimit
+              phoneHoldDurationRef.current >= currentSettings.timeLimit,
+              isMirroredRef.current
             );
           }
         } catch (inferErr) {
@@ -397,6 +401,8 @@ export function App() {
               }
               modelLoadingMessage={modelLoadingMessage}
               cameraError={cameraError}
+              isMirrored={isMirrored}
+              onToggleMirror={() => setIsMirrored((prev) => !prev)}
             />
           </div>
 
