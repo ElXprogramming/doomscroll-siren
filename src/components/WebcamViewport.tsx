@@ -211,7 +211,7 @@ export const WebcamViewport: React.FC<WebcamViewportProps> = ({
             </h3>
             <p className="text-xs font-mono text-slate-400 max-w-md mb-6 leading-relaxed">
               Arm the system to initiate real-time local computer vision surveillance.
-              If a phone is caught in your hand for more than 2 seconds, the tactical emergency siren will deploy.
+              If a phone is caught in your hand for more than 0.5 seconds, the tactical emergency siren will deploy.
             </p>
             <button
               onClick={onArmGuard}

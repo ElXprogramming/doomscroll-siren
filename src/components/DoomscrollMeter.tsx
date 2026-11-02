@@ -30,7 +30,7 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
   } else if (phoneHoldDuration >= timeLimit * 0.5) {
     statusText = '⚠️ IMMINENT SIREN WARNING';
     statusDesc = `Warning beeps active! Put your phone down now. ${remaining.toFixed(1)}s until siren triggers.`;
-  } else if (phoneHoldDuration > 0.2) {
+  } else if (phoneHoldDuration > 0.1) {
     statusText = 'CAUTION // PHONE IN VIEW';
     statusDesc = 'Doomscroll accumulator active. Anti-flicker grace buffer engaged.';
   }

@@ -28,7 +28,7 @@ export function App() {
   // Settings
   const [settings, setSettings] = useState<GuardSettings>({
     confidenceThreshold: 0.35,
-    timeLimit: 2,
+    timeLimit: 0.5,
     volume: 0.8,
     simulatedPhone: false,
   });
@@ -282,20 +282,20 @@ export function App() {
         if (hasPhone && !sirenAudio.isPlaying()) {
           sirenAudio.startSiren();
         }
-      } else if (duration >= timeLimit * 0.5) {
-        // Warning zone: e.g. at 1.0s for a 2.0s limit
+      } else if (duration >= timeLimit * 0.4) {
+        // Warning zone: e.g. at 0.2s for a 0.5s limit
         setGuardState('warning');
         if (sirenAudio.isPlaying()) {
           sirenAudio.stopSiren();
         }
 
-        const step = timeLimit <= 3 ? 0.5 : 1.0;
+        const step = timeLimit <= 1 ? 0.2 : timeLimit <= 3 ? 0.5 : 1.0;
         const currentStep = Math.floor(duration / step);
         if (currentStep > lastBeepSecondRef.current) {
           lastBeepSecondRef.current = currentStep;
           sirenAudio.playWarningBeep();
         }
-      } else if (duration > 0.2) {
+      } else if (duration > 0.1) {
         setGuardState('warning');
         if (sirenAudio.isPlaying()) {
           sirenAudio.stopSiren();

@@ -70,8 +70,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <p className="text-[11px] font-mono text-slate-400 mb-3 leading-relaxed">
             Continuous phone screen exposure duration before tactical siren engages.
           </p>
-          <div className="grid grid-cols-3 gap-2">
-            {[2, 5, 10].map((seconds) => (
+          <div className="grid grid-cols-4 gap-1.5">
+            {[0.5, 2, 5, 10].map((seconds) => (
               <button
                 key={seconds}
                 onClick={() => onUpdateSettings({ timeLimit: seconds })}
@@ -81,7 +81,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                     : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
                 }`}
               >
-                {seconds}s {seconds === 2 ? '★' : ''}
+                {seconds}s {seconds === 0.5 ? '★' : ''}
               </button>
             ))}
           </div>
