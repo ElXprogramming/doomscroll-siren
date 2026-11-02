@@ -26,11 +26,11 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
 
   if (guardState === 'siren' || phoneHoldDuration >= timeLimit) {
     statusText = '🚨 CRITICAL EXPOSURE BREACHED';
-    statusDesc = 'PHONE DETECTED > 10.0s! Put device down immediately to silence emergency siren.';
-  } else if (phoneHoldDuration >= 5.0) {
+    statusDesc = `PHONE DETECTED > ${timeLimit.toFixed(1)}s! Put device down immediately to silence emergency siren.`;
+  } else if (phoneHoldDuration >= timeLimit * 0.5) {
     statusText = '⚠️ IMMINENT SIREN WARNING';
     statusDesc = `Warning beeps active! Put your phone down now. ${remaining.toFixed(1)}s until siren triggers.`;
-  } else if (phoneHoldDuration >= 2.0) {
+  } else if (phoneHoldDuration > 0.2) {
     statusText = 'CAUTION // PHONE IN VIEW';
     statusDesc = 'Doomscroll accumulator active. Anti-flicker grace buffer engaged.';
   }
@@ -43,7 +43,7 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
       className={`rounded-xl border border-cyan-900/40 bg-[#080b12] p-5 shadow-2xl transition-all ${
         guardState === 'siren' || phoneHoldDuration >= timeLimit
           ? 'border-red-500/80 bg-red-950/20 glow-red'
-          : phoneHoldDuration >= 2.0
+          : phoneHoldDuration >= timeLimit * 0.5
           ? 'border-amber-500/40 glow-amber'
           : 'glow-cyan'
       }`}
@@ -53,7 +53,7 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
         <div className="flex items-center gap-2">
           {guardState === 'siren' || phoneHoldDuration >= timeLimit ? (
             <Siren className="w-5 h-5 text-red-500 animate-bounce" />
-          ) : phoneHoldDuration >= 2.0 ? (
+          ) : phoneHoldDuration >= timeLimit * 0.5 ? (
             <Flame className="w-5 h-5 text-amber-400 animate-pulse" />
           ) : (
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -83,9 +83,9 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
             className={`text-4xl sm:text-5xl font-black tracking-tight ${
               guardState === 'siren' || phoneHoldDuration >= timeLimit
                 ? 'text-red-500 text-glow-red animate-pulse'
-                : phoneHoldDuration >= 5.0
+                : phoneHoldDuration >= timeLimit * 0.5
                 ? 'text-amber-400 text-glow-amber'
-                : phoneHoldDuration >= 2.0
+                : phoneHoldDuration > 0.2
                 ? 'text-yellow-300'
                 : 'text-emerald-400 text-glow-cyan'
             }`}
@@ -101,7 +101,7 @@ export const DoomscrollMeter: React.FC<DoomscrollMeterProps> = ({
             className={`text-sm font-bold tracking-wide ${
               guardState === 'siren' || phoneHoldDuration >= timeLimit
                 ? 'text-red-400'
-                : phoneHoldDuration >= 2.0
+                : phoneHoldDuration >= timeLimit * 0.5
                 ? 'text-amber-400'
                 : 'text-emerald-400'
             }`}

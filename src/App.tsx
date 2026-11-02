@@ -28,7 +28,7 @@ export function App() {
   // Settings
   const [settings, setSettings] = useState<GuardSettings>({
     confidenceThreshold: 0.35,
-    timeLimit: 10,
+    timeLimit: 2,
     volume: 0.8,
     simulatedPhone: false,
   });
@@ -266,7 +266,7 @@ export function App() {
 
       // 3. Audio & Escalation States
       if (duration >= timeLimit) {
-        // 10.0s+ (DOOMSCROLL SIREN ACTIVE)
+        // Limit breached -> SIREN ACTIVE
         setGuardState('siren');
 
         if (!sirenTriggeredThisBreachRef.current) {
@@ -278,27 +278,27 @@ export function App() {
         if (hasPhone && !sirenAudio.isPlaying()) {
           sirenAudio.startSiren();
         }
-      } else if (duration >= 5.0) {
-        // 5.0s – 9.9s: Warning beep every whole second
+      } else if (duration >= timeLimit * 0.5) {
+        // Warning zone: e.g. at 1.0s for a 2.0s limit
         setGuardState('warning');
         if (sirenAudio.isPlaying()) {
           sirenAudio.stopSiren();
         }
 
-        const wholeSec = Math.floor(duration);
-        if (wholeSec > lastBeepSecondRef.current) {
-          lastBeepSecondRef.current = wholeSec;
+        const step = timeLimit <= 3 ? 0.5 : 1.0;
+        const currentStep = Math.floor(duration / step);
+        if (currentStep > lastBeepSecondRef.current) {
+          lastBeepSecondRef.current = currentStep;
           sirenAudio.playWarningBeep();
         }
-      } else if (duration >= 2.0) {
-        // 2.0s – 4.9s: Early warning
+      } else if (duration > 0.2) {
         setGuardState('warning');
         if (sirenAudio.isPlaying()) {
           sirenAudio.stopSiren();
         }
         lastBeepSecondRef.current = 0;
       } else {
-        // 0s – 2.0s: Clean / Locked in
+        // Clean / Locked in
         setGuardState('clean');
         if (sirenAudio.isPlaying()) {
           sirenAudio.stopSiren();
