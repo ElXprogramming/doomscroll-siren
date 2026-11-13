@@ -1,7 +1,25 @@
 {
   "name": "doomscroll-siren",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Autonomous client-side AI webcam focus sentry running YOLO11n ONNX Runtime Web (WebGPU/WASM) to detect phone doomscrolling and trigger a Web Audio emergency siren.",
+  "homepage": "https://doomscroll-siren.netlify.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ElXprogramming/doomscroll-siren.git"
+  },
+  "keywords": [
+    "doomscrolling",
+    "yolo11",
+    "onnxruntime-web",
+    "webgpu",
+    "webassembly",
+    "computer-vision",
+    "productivity",
+    "focus",
+    "react",
+    "typescript"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

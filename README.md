@@ -3,8 +3,11 @@
 > **Tactical Client-Side AI Focus Sentinel & Real-Time Phone Interceptor**
 > Running YOLO11 Nano via ONNX WebAssembly with Embedded NMS and Dual-Oscillator Web Audio Synthesizer.
 
+[![Latest Release](https://img.shields.io/github/v/release/ElXprogramming/doomscroll-siren?color=blue)](https://github.com/ElXprogramming/doomscroll-siren/releases)
+[![CI](https://github.com/ElXprogramming/doomscroll-siren/actions/workflows/ci.yml/badge.svg)](https://github.com/ElXprogramming/doomscroll-siren/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1a587c24-7709-40e9-bb18-849d091f90e5/deploy-status)](https://app.netlify.com/projects/doomscroll-siren/deploys)
 [![Live App](https://img.shields.io/badge/LIVE%20DEMO-doomscroll--siren.netlify.app-00f2fe?style=for-the-badge&logo=netlify)](https://doomscroll-siren.netlify.app)
+[![GitHub Stars](https://img.shields.io/github/stars/ElXprogramming/doomscroll-siren?style=social)](https://github.com/ElXprogramming/doomscroll-siren/stargazers)
 
 🌐 **Live Deployment**: [https://doomscroll-siren.netlify.app](https://doomscroll-siren.netlify.app)  
 📦 **GitHub Repository**: [https://github.com/ElXprogramming/doomscroll-siren](https://github.com/ElXprogramming/doomscroll-siren)
@@ -58,7 +61,7 @@ The instant you put the phone down, the siren halts.
 
 1. Clone repository:
    ```bash
-   git clone https://github.com/<owner>/doomscroll-siren.git
+   git clone https://github.com/ElXprogramming/doomscroll-siren.git
    cd doomscroll-siren
    ```
 
@@ -82,3 +85,9 @@ The instant you put the phone down, the siren halts.
 ## 🔒 Privacy & Permissions
 
 Doomscroll Siren accesses your webcam strictly through standard browser media stream APIs (`navigator.mediaDevices.getUserMedia`). All frames are processed locally inside offscreen canvas memory. No image data or video feeds are ever stored, logged, or transmitted over the network.
+
+---
+
+## 🤝 Contributing & Security
+
+Contributions and bug reports are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md), our [Code of Conduct](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
